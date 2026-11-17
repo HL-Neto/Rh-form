@@ -1,0 +1,666 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Entrevista de desligamento</title>
+<meta name="description" content="Formulário de entrevista de desligamento da Motomar.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400..700&family=Spectral:ital,wght@0,400;0,500;1,400&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ink:#1A1214;
+    --ink-2:#4A3C3F;
+    --ink-3:#7C6B6E;
+    --papel:#FFFFFF;
+    --superficie:#FFFFFF;
+    --campo:#FEF8F9;
+    --linha:#EFC9CF;
+    --linha-forte:#DF9BA4;
+    --acento:#C8102E;
+    --acento-forte:#9A0B22;
+    --acento-suave:#F9DDE1;
+    --erro:#6E0817;
+    --erro-borda:#C79099;
+    --erro-fundo:#FDF2F3;
+  }
+
+  *{box-sizing:border-box}
+
+  html{-webkit-text-size-adjust:100%;color-scheme:light}
+
+  body{
+    margin:0;
+    background:var(--papel);
+    color:var(--ink);
+    font-family:"Archivo","Helvetica Neue",Arial,sans-serif;
+    font-size:15px;
+    -webkit-font-smoothing:antialiased;
+  }
+
+  /* ---------- barra de progresso ---------- */
+
+  .barra{
+    position:sticky;
+    top:0;
+    z-index:20;
+    background:var(--acento);
+  }
+  .barra-interna{
+    max-width:760px;
+    margin:0 auto;
+    padding:11px 20px;
+    display:flex;
+    align-items:baseline;
+    justify-content:space-between;
+    gap:16px;
+  }
+  .marca{font-size:15px;font-weight:600;letter-spacing:-.01em;color:#fff}
+  .marca span{color:rgba(255,255,255,.72);font-weight:400}
+  .contagem{
+    margin:0;
+    font-size:13px;
+    color:rgba(255,255,255,.86);
+    font-variant-numeric:tabular-nums;
+    text-align:right;
+  }
+  .mostrador{height:4px;background:rgba(0,0,0,.22)}
+  .mostrador i{display:block;height:100%;width:0;background:#fff;transition:width .3s ease}
+
+  /* ---------- estrutura ---------- */
+
+  main{max-width:760px;margin:0 auto;padding:0 20px 112px}
+
+  .abertura{padding:60px 0 8px}
+  h1{
+    margin:0 0 20px;
+    font-size:clamp(30px,6.4vw,44px);
+    font-weight:700;
+    line-height:1.04;
+    letter-spacing:-.028em;
+    color:var(--acento);
+  }
+  .abertura p{margin:0 0 18px}
+  .abertura-texto{
+    font-family:Spectral,Georgia,serif;
+    font-size:19px;
+    line-height:1.62;
+    color:var(--ink-2);
+    max-width:60ch;
+  }
+  .abertura-nota{font-size:14px;line-height:1.55;color:var(--ink-3);max-width:56ch}
+
+  .secao{margin-top:46px}
+  .secao-titulo{margin:0 0 4px;font-size:20px;font-weight:600;letter-spacing:-.016em;color:var(--acento)}
+  .secao-descricao{
+    margin:0 0 14px;
+    font-family:Spectral,Georgia,serif;
+    font-style:italic;
+    font-size:15px;
+    color:var(--ink-3);
+  }
+
+  .painel{background:var(--superficie);border:1px solid var(--linha);border-top:3px solid var(--acento)}
+  .pergunta{padding:22px 24px;border-top:1px solid var(--linha)}
+  .pergunta:first-child{border-top:0}
+
+  .rotulo{
+    display:block;
+    margin:0 0 10px;
+    font-family:Spectral,Georgia,serif;
+    font-size:17px;
+    line-height:1.45;
+    color:var(--ink);
+    max-width:56ch;
+  }
+  .obrig{
+    font-family:"Archivo",Arial,sans-serif;
+    font-size:11.5px;
+    letter-spacing:.015em;
+    color:var(--acento);
+    white-space:nowrap;
+  }
+  .ajuda{margin:-2px 0 10px;font-size:13.5px;line-height:1.5;color:var(--ink-3);max-width:58ch}
+
+  /* ---------- campos ---------- */
+
+  input[type=text],textarea,select{
+    width:100%;
+    font-family:"Archivo",Arial,sans-serif;
+    font-size:15px;
+    color:var(--ink);
+    background:var(--campo);
+    border:1px solid var(--linha);
+    border-radius:2px;
+    padding:11px 12px;
+    transition:border-color .15s ease,box-shadow .15s ease;
+  }
+  textarea{min-height:96px;line-height:1.55;resize:vertical;display:block}
+  select{
+    appearance:none;
+    -webkit-appearance:none;
+    padding-right:38px;
+    cursor:pointer;
+    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1.6 6 6.4 11 1.6' fill='none' stroke='%23C8102E' stroke-width='1.6' stroke-linecap='round'/%3E%3C/svg%3E");
+    background-repeat:no-repeat;
+    background-position:right 13px center;
+  }
+  input[type=text]:focus,textarea:focus,select:focus{
+    outline:none;
+    border-color:var(--acento);
+    box-shadow:0 0 0 3px var(--acento-suave);
+  }
+
+  .pergunta.invalida input[type=text],
+  .pergunta.invalida textarea,
+  .pergunta.invalida select{border-color:var(--erro)}
+
+  /* ---------- mostrador de 1 a 5 ---------- */
+
+  .nota{margin:0;padding:0;border:0;min-width:0}
+  .nota legend{padding:0}
+  .nota-barras{display:flex;align-items:flex-end;gap:6px;margin-top:4px}
+  .seg{
+    position:relative;
+    flex:1 1 0;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    gap:9px;
+    padding-bottom:2px;
+    cursor:pointer;
+  }
+  .seg input{position:absolute;width:1px;height:1px;margin:0;opacity:0}
+  .seg b{
+    display:block;
+    width:100%;
+    border-radius:1px;
+    background:var(--linha);
+    transition:background-color .14s ease;
+  }
+  .seg[data-n="1"] b{height:16px}
+  .seg[data-n="2"] b{height:24px}
+  .seg[data-n="3"] b{height:32px}
+  .seg[data-n="4"] b{height:40px}
+  .seg[data-n="5"] b{height:48px}
+  .seg i{
+    font-style:normal;
+    font-size:13px;
+    color:var(--ink-3);
+    font-variant-numeric:tabular-nums;
+    transition:color .14s ease;
+  }
+  .seg.previa b{background:var(--linha-forte)}
+  .seg.ativa b{background:var(--acento)}
+  .seg.ativa i{color:var(--ink);font-weight:600}
+  .seg input:focus-visible ~ b{box-shadow:0 0 0 3px var(--acento-suave)}
+  .nota.invalida .seg b{background:var(--erro-borda)}
+  .nota-escala{
+    display:flex;
+    justify-content:space-between;
+    margin-top:11px;
+    font-size:12.5px;
+    color:var(--ink-3);
+  }
+
+  /* ---------- envio ---------- */
+
+  .enviar{margin-top:46px;display:flex;flex-direction:column;align-items:flex-start;gap:16px}
+  button{
+    font-family:"Archivo",Arial,sans-serif;
+    font-size:15px;
+    font-weight:600;
+    color:#fff;
+    background:var(--acento);
+    border:1px solid var(--acento-forte);
+    border-radius:2px;
+    padding:13px 26px;
+    cursor:pointer;
+    transition:background-color .15s ease;
+  }
+  button:hover{background:var(--acento-forte)}
+  button:focus-visible{outline:2px solid var(--ink);outline-offset:2px}
+  button[disabled]{opacity:.55;cursor:progress}
+  .enviar-nota{margin:0;font-size:13.5px;color:var(--ink-3);max-width:52ch;line-height:1.5}
+
+  .aviso{
+    width:100%;
+    background:var(--erro-fundo);
+    border:1px solid var(--erro-borda);
+    border-left:3px solid var(--erro);
+    padding:15px 17px;
+    color:var(--erro);
+    font-size:14px;
+    line-height:1.5;
+  }
+  .aviso strong{display:block;margin-bottom:8px;font-weight:600}
+  .aviso ul{margin:0;padding-left:18px}
+  .aviso li{margin-bottom:5px}
+  .aviso li:last-child{margin-bottom:0}
+
+  .carregando{
+    margin:56px 0 0;
+    padding:22px 24px;
+    background:var(--superficie);
+    border:1px solid var(--linha);
+    color:var(--ink-3);
+    font-size:14px;
+  }
+
+  .confirmacao{
+    margin-top:64px;
+    background:var(--superficie);
+    border:1px solid var(--linha);
+    border-top:3px solid var(--acento);
+    padding:38px 32px;
+  }
+  .confirmacao:focus{outline:none}
+  .confirmacao h2{margin:0 0 14px;font-size:27px;font-weight:700;letter-spacing:-.022em}
+  .confirmacao p{
+    margin:0 0 16px;
+    font-family:Spectral,Georgia,serif;
+    font-size:17px;
+    line-height:1.6;
+    color:var(--ink-2);
+    max-width:54ch;
+  }
+  .protocolo{margin:0;font-family:"Archivo",Arial,sans-serif;font-size:13px;color:var(--ink-3)}
+  .protocolo code{
+    font-family:ui-monospace,SFMono-Regular,Menlo,monospace;
+    font-size:12.5px;
+    color:var(--ink);
+    background:var(--acento-suave);
+    border:1px solid var(--linha);
+    border-radius:2px;
+    padding:3px 7px;
+    margin-left:4px;
+  }
+
+  [hidden]{display:none !important}
+
+  @media (max-width:600px){
+    main{padding:0 16px 80px}
+    .barra-interna{padding:10px 16px}
+    .abertura{padding:40px 0 4px}
+    .abertura-texto{font-size:18px}
+    .pergunta{padding:19px 16px}
+    .confirmacao{padding:28px 20px}
+    .nota-barras{gap:5px}
+  }
+
+  @media (prefers-reduced-motion: reduce){
+    *{transition:none !important;scroll-behavior:auto !important}
+  }
+</style>
+</head>
+<body>
+
+<header class="barra">
+  <div class="barra-interna">
+    <p class="marca" style="margin:0">Motomar <span>Recursos Humanos</span></p>
+    <p class="contagem" id="contagem">Carregando as perguntas</p>
+  </div>
+  <div class="mostrador"><i id="preenchido"></i></div>
+</header>
+
+<main>
+  <section class="abertura" id="abertura">
+    <h1>Entrevista de desligamento</h1>
+    <p class="abertura-texto">Você está deixando a Motomar. Antes de fechar essa porta, o RH quer entender como foi
+      trabalhar aqui: o que funcionou, o que pesou e o que a empresa precisa mudar para quem fica.</p>
+    <p class="abertura-nota">Leva cerca de 8 minutos. As perguntas marcadas como obrigatórias precisam de resposta;
+      o resto você responde se quiser. Quanto mais direto você for, mais útil fica.</p>
+  </section>
+
+  <p class="carregando" id="carregando">Carregando as perguntas.</p>
+
+  <form id="formulario" novalidate hidden>
+    <div id="secoes"></div>
+    <div class="enviar">
+      <div class="aviso" id="aviso" role="alert" hidden></div>
+      <button type="submit" id="botao">Enviar respostas</button>
+      <p class="enviar-nota">Suas respostas vão direto para o RH e ficam registradas com a data do envio.</p>
+    </div>
+  </form>
+
+  <section class="confirmacao" id="confirmacao" tabindex="-1" hidden></section>
+</main>
+
+<script>
+(function(){
+  "use strict";
+
+  var form = document.getElementById("formulario");
+  var alvoSecoes = document.getElementById("secoes");
+  var carregando = document.getElementById("carregando");
+  var aviso = document.getElementById("aviso");
+  var botao = document.getElementById("botao");
+  var contagem = document.getElementById("contagem");
+  var preenchido = document.getElementById("preenchido");
+  var confirmacao = document.getElementById("confirmacao");
+  var abertura = document.getElementById("abertura");
+
+  var perguntas = [];
+  var controles = {};   // campo -> { tipo, el, bloco }
+  var suave = !window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+  function cria(tag, classe, texto){
+    var el = document.createElement(tag);
+    if(classe){ el.className = classe; }
+    if(texto !== undefined && texto !== null){ el.textContent = texto; }
+    return el;
+  }
+
+  /* ----- montagem do formulário a partir de /api/perguntas ----- */
+
+  function montaRotulo(pergunta, para){
+    var rotulo = cria(para ? "label" : "legend", "rotulo", pergunta.label);
+    if(para){ rotulo.setAttribute("for", para); }
+    if(pergunta.obrigatorio){
+      rotulo.appendChild(document.createTextNode(" "));
+      rotulo.appendChild(cria("span", "obrig", "obrigatória"));
+    }
+    return rotulo;
+  }
+
+  function montaNota(pergunta, id){
+    var fieldset = cria("fieldset", "nota");
+    fieldset.appendChild(montaRotulo(pergunta, null));
+    if(pergunta.ajuda){ fieldset.appendChild(cria("p", "ajuda", pergunta.ajuda)); }
+
+    var barras = cria("div", "nota-barras");
+    for(var n = 1; n <= 5; n++){
+      var seg = cria("label", "seg");
+      seg.dataset.n = String(n);
+      var radio = document.createElement("input");
+      radio.type = "radio";
+      radio.name = id;
+      radio.value = String(n);
+      seg.appendChild(radio);
+      seg.appendChild(cria("b"));
+      seg.appendChild(cria("i", null, String(n)));
+      barras.appendChild(seg);
+    }
+    fieldset.appendChild(barras);
+
+    var escala = cria("div", "nota-escala");
+    escala.appendChild(cria("span", null, "1 muito ruim"));
+    escala.appendChild(cria("span", null, "5 excelente"));
+    fieldset.appendChild(escala);
+
+    controles[pergunta.campo] = { tipo: "nota", el: fieldset, nome: id };
+    return fieldset;
+  }
+
+  function montaCampo(pergunta, id){
+    var fragmento = document.createDocumentFragment();
+    fragmento.appendChild(montaRotulo(pergunta, id));
+
+    var idAjuda = null;
+    if(pergunta.ajuda){
+      idAjuda = id + "-ajuda";
+      var ajuda = cria("p", "ajuda", pergunta.ajuda);
+      ajuda.id = idAjuda;
+      fragmento.appendChild(ajuda);
+    }
+
+    var el;
+    if(pergunta.tipo === "longo"){
+      el = document.createElement("textarea");
+      el.rows = 3;
+    }else if(pergunta.tipo === "select"){
+      el = document.createElement("select");
+      el.appendChild(new Option("Escolha uma opção", ""));
+      (pergunta.opcoes || []).forEach(function(opcao){
+        el.appendChild(new Option(opcao, opcao));
+      });
+    }else{
+      el = document.createElement("input");
+      el.type = "text";
+      el.autocomplete = pergunta.campo === "Nome Completo:" ? "name" : "off";
+      if(pergunta.sugestoes && pergunta.sugestoes.length){
+        var lista = cria("datalist");
+        lista.id = id + "-lista";
+        pergunta.sugestoes.forEach(function(sugestao){
+          lista.appendChild(new Option(sugestao, sugestao));
+        });
+        el.setAttribute("list", lista.id);
+        fragmento.appendChild(lista);
+      }
+    }
+
+    el.id = id;
+    if(pergunta.tipo !== "select"){ el.maxLength = pergunta.tipo === "texto" ? 200 : 5000; }
+    if(idAjuda){ el.setAttribute("aria-describedby", idAjuda); }
+    if(pergunta.obrigatorio){ el.setAttribute("aria-required", "true"); }
+    fragmento.appendChild(el);
+
+    controles[pergunta.campo] = { tipo: pergunta.tipo, el: el };
+    return fragmento;
+  }
+
+  function monta(secoes, lista){
+    perguntas = lista;
+    secoes.forEach(function(secao){
+      var daSecao = lista.filter(function(p){ return p.secao === secao.id; });
+      if(!daSecao.length){ return; }
+
+      var bloco = cria("section", "secao");
+      bloco.appendChild(cria("h2", "secao-titulo", secao.titulo));
+      if(secao.descricao){ bloco.appendChild(cria("p", "secao-descricao", secao.descricao)); }
+
+      var painel = cria("div", "painel");
+      daSecao.forEach(function(pergunta){
+        var id = "c" + lista.indexOf(pergunta);
+        var caixa = cria("div", "pergunta");
+        caixa.appendChild(pergunta.tipo === "nota" ? montaNota(pergunta, id) : montaCampo(pergunta, id));
+        controles[pergunta.campo].bloco = caixa;
+        painel.appendChild(caixa);
+      });
+
+      bloco.appendChild(painel);
+      alvoSecoes.appendChild(bloco);
+    });
+
+    carregando.hidden = true;
+    form.hidden = false;
+    atualizaProgresso();
+  }
+
+  /* ----- leitura das respostas ----- */
+
+  function valor(pergunta){
+    var controle = controles[pergunta.campo];
+    if(!controle){ return ""; }
+    if(controle.tipo === "nota"){
+      var marcado = controle.el.querySelector("input:checked");
+      return marcado ? marcado.value : "";
+    }
+    return controle.el.value.trim();
+  }
+
+  function respostas(){
+    var saida = {};
+    perguntas.forEach(function(pergunta){ saida[pergunta.campo] = valor(pergunta); });
+    return saida;
+  }
+
+  function atualizaProgresso(){
+    var respondidas = perguntas.filter(function(p){ return valor(p) !== ""; }).length;
+    var total = perguntas.length;
+    contagem.textContent = respondidas + " de " + total + " respondidas";
+    preenchido.style.width = total ? (respondidas / total * 100) + "%" : "0";
+  }
+
+  /* ----- erros ----- */
+
+  function limpaErros(){
+    aviso.hidden = true;
+    aviso.textContent = "";
+    Object.keys(controles).forEach(function(campo){
+      var controle = controles[campo];
+      if(controle.bloco){ controle.bloco.classList.remove("invalida"); }
+      controle.el.classList.remove("invalida");
+      if(controle.tipo !== "nota"){ controle.el.removeAttribute("aria-invalid"); }
+    });
+  }
+
+  function marca(pergunta){
+    var controle = controles[pergunta.campo];
+    if(!controle){ return null; }
+    if(controle.tipo === "nota"){
+      controle.el.classList.add("invalida");
+    }else{
+      if(controle.bloco){ controle.bloco.classList.add("invalida"); }
+      controle.el.setAttribute("aria-invalid", "true");
+    }
+    return controle;
+  }
+
+  function mostraErros(titulo, itens, primeiro){
+    aviso.textContent = "";
+    aviso.appendChild(cria("strong", null, titulo));
+    var ul = cria("ul");
+    itens.forEach(function(item){ ul.appendChild(cria("li", null, item)); });
+    aviso.appendChild(ul);
+    aviso.hidden = false;
+
+    var foco = primeiro && primeiro.bloco ? primeiro.bloco : (primeiro ? primeiro.el : aviso);
+    foco.scrollIntoView({ block: "center", behavior: suave ? "smooth" : "auto" });
+    var alvo = primeiro ? (primeiro.tipo === "nota" ? primeiro.el.querySelector("input") : primeiro.el) : null;
+    if(alvo){ setTimeout(function(){ alvo.focus({ preventScroll: true }); }, suave ? 320 : 0); }
+  }
+
+  function erroDeServidor(mensagens){
+    var primeiro = null;
+    mensagens.forEach(function(mensagem){
+      var achado = perguntas.filter(function(p){ return mensagem.indexOf('"' + p.label + '"') === 0; })[0];
+      if(achado){
+        var controle = marca(achado);
+        if(!primeiro){ primeiro = controle; }
+      }
+    });
+    mostraErros("O envio não foi aceito:", mensagens, primeiro);
+  }
+
+  /* ----- envio ----- */
+
+  function confirma(resultado){
+    form.hidden = true;
+    abertura.hidden = true;
+    confirmacao.textContent = "";
+    confirmacao.appendChild(cria("h2", null, "Respostas enviadas."));
+    confirmacao.appendChild(cria("p", null,
+      "O RH já recebeu a sua entrevista. Obrigado pelo tempo e pela franqueza — é com isso que a empresa muda."));
+    var protocolo = cria("p", "protocolo", "Protocolo do envio");
+    protocolo.appendChild(cria("code", null, resultado.id));
+    confirmacao.appendChild(protocolo);
+    confirmacao.hidden = false;
+    contagem.textContent = "Enviado";
+    preenchido.style.width = "100%";
+    window.scrollTo({ top: 0, behavior: suave ? "smooth" : "auto" });
+    confirmacao.focus();
+  }
+
+  form.addEventListener("input", atualizaProgresso);
+  form.addEventListener("change", atualizaProgresso);
+
+  form.addEventListener("submit", function(evento){
+    evento.preventDefault();
+    limpaErros();
+
+    var faltando = perguntas.filter(function(p){ return p.obrigatorio && valor(p) === ""; });
+    if(faltando.length){
+      var primeiro = null;
+      var itens = faltando.map(function(p){
+        var controle = marca(p);
+        if(!primeiro){ primeiro = controle; }
+        return p.label;
+      });
+      mostraErros(
+        faltando.length === 1 ? "Falta responder 1 pergunta obrigatória:" :
+          "Faltam responder " + faltando.length + " perguntas obrigatórias:",
+        itens, primeiro);
+      return;
+    }
+
+    botao.disabled = true;
+    botao.textContent = "Enviando";
+
+    fetch("/api/desligamento", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(respostas())
+    }).then(function(resposta){
+      return resposta.json().catch(function(){ return {}; }).then(function(corpo){
+        return { ok: resposta.ok, corpo: corpo };
+      });
+    }).then(function(retorno){
+      if(retorno.ok && retorno.corpo.id){
+        confirma(retorno.corpo);
+        return;
+      }
+      botao.disabled = false;
+      botao.textContent = "Enviar respostas";
+      var erros = retorno.corpo.erros;
+      erroDeServidor(erros && erros.length ? erros : ["Não foi possível salvar as respostas. Tente de novo."]);
+    }).catch(function(){
+      botao.disabled = false;
+      botao.textContent = "Enviar respostas";
+      mostraErros("O envio não saiu daqui:", ["Sem conexão com o servidor. Verifique a internet e envie de novo."], null);
+    });
+  });
+
+  /* ----- mostrador de 1 a 5: preenche até o segmento ----- */
+
+  function pinta(barras, ate, classe){
+    Array.prototype.forEach.call(barras.children, function(seg){
+      seg.classList.toggle(classe, Number(seg.dataset.n) <= ate);
+    });
+  }
+
+  function segmentoDe(evento){
+    return evento.target.closest ? evento.target.closest(".seg") : null;
+  }
+
+  alvoSecoes.addEventListener("change", function(evento){
+    var seg = segmentoDe(evento);
+    if(!seg){ return; }
+    var barras = seg.parentElement;
+    barras.parentElement.classList.remove("invalida");
+    pinta(barras, Number(seg.dataset.n), "ativa");
+  });
+
+  alvoSecoes.addEventListener("pointerover", function(evento){
+    var seg = segmentoDe(evento);
+    if(seg){ pinta(seg.parentElement, Number(seg.dataset.n), "previa"); }
+  });
+
+  alvoSecoes.addEventListener("pointerout", function(evento){
+    var seg = segmentoDe(evento);
+    if(!seg){ return; }
+    var indo = evento.relatedTarget;
+    if(indo && seg.contains(indo)){ return; }   // ainda dentro do mesmo segmento
+    pinta(seg.parentElement, 0, "previa");
+  });
+
+  /* ----- carga inicial ----- */
+
+  fetch("/api/perguntas").then(function(resposta){
+    if(!resposta.ok){ throw new Error("http " + resposta.status); }
+    return resposta.json();
+  }).then(function(dados){
+    monta(dados.secoes || [], dados.perguntas || []);
+  }).catch(function(){
+    carregando.className = "aviso";
+    carregando.textContent = "";
+    carregando.appendChild(cria("strong", null, "As perguntas não carregaram."));
+    carregando.appendChild(cria("span", null,
+      "O servidor do formulário não respondeu. Recarregue a página; se continuar assim, avise o RH."));
+    contagem.textContent = "";
+  });
+})();
+</script>
+</body>
+</html>
